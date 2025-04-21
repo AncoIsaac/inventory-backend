@@ -1,4 +1,4 @@
-package com.isaacAnco.inventory.model;
+package com.isaacAnco.inventory.model.user;
 
 import jakarta.persistence.*;
 import lombok.*;
