@@ -3,11 +3,11 @@ package com.isaacAnco.inventory.controller.auth;
 import com.isaacAnco.inventory.dto.auth.AuthResponseDto;
 import com.isaacAnco.inventory.dto.auth.SignInRequestDto;
 import com.isaacAnco.inventory.exception.ResourceNotFoundException;
-import com.isaacAnco.inventory.model.user.User;
 import com.isaacAnco.inventory.response.CustomApiResponse;
 import com.isaacAnco.inventory.service.auth.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("${api.prefix}/auth")
 @Tag(name = "Auth", description = "auth operation")
+@SecurityRequirements
 public class AuthController {
 
     private final AuthService authService;
@@ -33,7 +34,7 @@ public class AuthController {
     @ApiResponse(responseCode = "400", description = "Datos de usuario inválidos")
     private ResponseEntity<CustomApiResponse> SignIn(@RequestBody SignInRequestDto request){
         try {
-            User signIn = authService.signIn(request);
+            AuthResponseDto signIn = authService.signIn(request);
             AuthResponseDto responseAuth = modelMapper.map(signIn, AuthResponseDto.class);
             return ResponseEntity.ok(new CustomApiResponse("success", responseAuth, "Login success"));
         } catch (ResourceNotFoundException e) {

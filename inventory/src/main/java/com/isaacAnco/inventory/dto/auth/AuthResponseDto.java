@@ -15,4 +15,8 @@ public class AuthResponseDto {
     private String userName;
     @Schema(description = "User's username", example = "true")
     private Boolean isActive;
+    @Schema(description = "JWT token for authentication")
+    private String token;
+    @Schema(description = "User's role", example = "USER")
+    private String role;
 }

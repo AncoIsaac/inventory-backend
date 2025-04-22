@@ -5,7 +5,6 @@ import com.isaacAnco.inventory.dto.user.UserResponseDto;
 import com.isaacAnco.inventory.exception.ResourceNotFoundException;
 import com.isaacAnco.inventory.model.user.User;
 import com.isaacAnco.inventory.response.CustomApiResponse;
-import com.isaacAnco.inventory.service.DtoConverter;
 import com.isaacAnco.inventory.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("${api.prefix}/users")
 @Tag(name = "Users", description = "User-realted operation")
+@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;

@@ -1,7 +1,9 @@
 package com.isaacAnco.inventory.service.auth;
 
+import com.isaacAnco.inventory.dto.auth.AuthResponseDto;
 import com.isaacAnco.inventory.dto.auth.SignInRequestDto;
 import com.isaacAnco.inventory.exception.ResourceNotFoundException;
+import com.isaacAnco.inventory.jwt.JwtService;
 import com.isaacAnco.inventory.model.user.User;
 import com.isaacAnco.inventory.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,21 +13,30 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService implements IAuthService {
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    @Override
-    public User signIn(SignInRequestDto request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found "));
+    private final JwtService jwtService;
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-            throw new ResourceNotFoundException("Error code");
+    @Override
+    public AuthResponseDto signIn(SignInRequestDto request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new ResourceNotFoundException("Invalid credentials");
         }
-        if (!user.getIsActive()){
+        if (!user.getIsActive()) {
             throw new ResourceNotFoundException("User is not active");
         }
-        return user;
-    }
 
+        AuthResponseDto response = new AuthResponseDto();
+        response.setId(user.getId());
+        response.setEmail(user.getEmail());
+        response.setUserName(user.getUserName());
+        response.setIsActive(user.getIsActive());
+        response.setToken(jwtService.generateToken(user.getEmail()));
+        response.setRole(user.getRole().name());
+        
+        return response;
+    }
 }

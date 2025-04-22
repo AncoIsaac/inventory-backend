@@ -1,18 +1,17 @@
 package com.isaacAnco.inventory.dto.user;
 
+
+import com.isaacAnco.inventory.model.user.Role;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class UserRequestDto {
     @Schema(description = "User's email", example = "user@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "Email cannot be empty")
@@ -27,4 +26,7 @@ public class UserRequestDto {
     @Schema(description = "User's name", example = "miguel", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @Size(max = 10, message = "Name must be less than 20 characters long")
     private String userName;
+
+    @Schema(description = "User's role", example = "USER", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Role role = Role.USER;
 }
