@@ -21,7 +21,7 @@ public class UserService implements IUserService {
     @Override
     public User createUser(UserRequestDto request) {
         if (userRepository.existsByEmail(request.getEmail())){
-            throw new ResourceNotFoundException("The mail is already register");
+            throw new ResourceNotFoundException("The email is already register");
         }
         User user = new User();
         user.setEmail(request.getEmail());
