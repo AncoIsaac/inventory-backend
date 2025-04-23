@@ -84,7 +84,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Usuario obtenido exitosamente")
     @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     @PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
-    public ResponseEntity<CustomApiResponse> getUserById(String id){
+    public ResponseEntity<CustomApiResponse> getUserById(@PathVariable String id){
         try {
             User user = userService.getUserById(id);
             UserResponseDto responseDto = modelMapper.map(user, UserResponseDto.class);
@@ -118,5 +118,4 @@ public class UserController {
                 .body(new CustomApiResponse("error", e.getMessage(), "user updated error"));
         }
     }
-
 }

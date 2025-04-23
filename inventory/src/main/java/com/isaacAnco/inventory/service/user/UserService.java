@@ -51,8 +51,9 @@ public class UserService implements IUserService {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("The user not exist")
         );
+        System.out.println(updateUser.getEmail());
 
-        if (user.getEmail() != null) {
+        if (updateUser.getEmail() == null) {
             if (user.getEmail().equals(updateUser.getEmail())) {
                 throw new ResourceNotFoundException("The email is already register");    
             }

@@ -44,18 +44,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
             if (jwtService.isTokenValid(jwt, userEmail)) {
-                // Obtener el rol del token
-                String role = jwtService.extractRole(jwt);
-                
-                // Crear una nueva colección de autoridades basada en el rol del token
-                Collection<GrantedAuthority> authorities = Collections.singletonList(
-                    new SimpleGrantedAuthority("ROLE_" + role)
-                );
-
+              
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     userDetails,
                     null,
-                    authorities  // Usar las autoridades del token en lugar de userDetails.getAuthorities()
+                    userDetails.getAuthorities() // Usar las autoridades del token en lugar de userDetails.getAuthorities()
                 );
                 
                 authToken.setDetails(
