@@ -8,8 +8,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class UpdateUser {
-    @Schema(description = "user iid", example = "uuasd")
-    private String id;
     @Schema(description = "User's username", example = "paquito")
     private String userName;
     @Schema(description = "User's email", example = "user@example.com")

@@ -32,18 +32,40 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<User> getAllUser() {
-        return List.of();
+    public List<User> getAllUsers() {
+        if (userRepository.findAll().isEmpty()){
+            throw new ResourceNotFoundException("The list is empty");
+        }
+        return userRepository.findAll();
     }
 
     @Override
     public User getUserById(String id) {
-        return null;
+        return userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("The user not exist")
+        );
     }
 
     @Override
     public User updateUser(String id, UpdateUser updateUser) {
-        return null;
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("The user not exist")
+        );
+
+        if (user.getEmail() != null) {
+            if (user.getEmail().equals(updateUser.getEmail())) {
+                throw new ResourceNotFoundException("The email is already register");    
+            }
+            user.setEmail(updateUser.getEmail());    
+        }
+
+        user.setIsActive(updateUser.getIsActive());
+
+        if (updateUser.getUserName() != null) {
+            user.setUserName(updateUser.getUserName());
+        }
+
+        return userRepository.save(user);
     }
 
     @Override

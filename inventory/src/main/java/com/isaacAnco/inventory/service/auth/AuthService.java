@@ -34,7 +34,7 @@ public class AuthService implements IAuthService {
         response.setEmail(user.getEmail());
         response.setUserName(user.getUserName());
         response.setIsActive(user.getIsActive());
-        response.setToken(jwtService.generateToken(user.getEmail()));
+        response.setToken(jwtService.generateToken(user.getEmail(), user.getRole().name()));
         response.setRole(user.getRole().name());
         
         return response;
