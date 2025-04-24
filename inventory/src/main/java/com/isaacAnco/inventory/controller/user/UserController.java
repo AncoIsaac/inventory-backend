@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -148,6 +149,25 @@ public class UserController {
             return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new CustomApiResponse("error", e.getMessage(), "user updated error"));
+        }
+    }
+
+    @DeleteMapping("deleteUser/{id}")
+    @Operation(summary = "Delete user",
+            description = "Deletes a user from the system")
+    @ApiResponse(responseCode = "200", description = "User deleted successfully")
+    @ApiResponse(responseCode = "404", description = "User not found")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CustomApiResponse> deleteUser(@PathVariable String id){
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new CustomApiResponse("success", null, "user deleted"));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity
+               .status(HttpStatus.NOT_FOUND)
+               .body(new CustomApiResponse("error", e.getMessage(), "user deleted error"));
         }
     }
 }

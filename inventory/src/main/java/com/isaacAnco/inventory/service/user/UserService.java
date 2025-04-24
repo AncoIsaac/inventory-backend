@@ -73,7 +73,11 @@ public class UserService implements IUserService {
 
     @Override
     public void deleteUser(String id) {
-
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("The user not exist")
+        );
+        user.setIsActive(false);
+        userRepository.save(user);
     }
 
     @Override
