@@ -6,6 +6,7 @@ import com.isaacAnco.inventory.dto.user.UserResponseDto;
 import com.isaacAnco.inventory.exception.ResourceNotFoundException;
 import com.isaacAnco.inventory.model.user.User;
 import com.isaacAnco.inventory.response.CustomApiResponse;
+import com.isaacAnco.inventory.response.CustomApiResponsePagination;
 import com.isaacAnco.inventory.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +17,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,21 +29,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${api.prefix}/users")
-@Tag(name = "Users", description = "User-realted operation")
+@Tag(name = "Users", description = "User management operations")
 public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;
 
     @PostMapping()
-    @Operation(summary = "Crear un nuevo usuario",
-            description = "Registra un nuevo usuario en el sistema")
-    @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente")
-    @ApiResponse(responseCode = "400", description = "Datos de usuario inválidos")
+    @Operation(summary = "Create a new user",
+    description = "Register a new user in the system")
+    @ApiResponse(responseCode = "201", description = "User created successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid user data")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CustomApiResponse> createUser(@RequestBody UserRequestDto userResDto){
         try {
@@ -56,10 +61,10 @@ public class UserController {
     }
 
     @GetMapping("allUsers")
-    @Operation(summary = "Obtener todos los usuarios",
-            description = "Obtiene una lista de todos los usuarios registrados en el sistema")
-    @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida exitosamente")
-    @ApiResponse(responseCode = "404", description = "No se encontraron usuarios")
+    @Operation(summary = "Get all users",
+    description = "Retrieves a list of all registered users in the system")
+    @ApiResponse(responseCode = "200", description = "Users list retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "No users found")
     @PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
 
     public ResponseEntity<CustomApiResponse> getAllUsers(){
@@ -79,10 +84,10 @@ public class UserController {
     }
 
     @GetMapping("getUserById/{id}")
-    @Operation(summary = "Obtener un usuario por ID",
-            description = "Obtiene un usuario específico por su ID")
-    @ApiResponse(responseCode = "200", description = "Usuario obtenido exitosamente")
-    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    @Operation(summary = "Get user by ID",
+            description = "Retrieves a specific user by their ID")
+    @ApiResponse(responseCode = "200", description = "User retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "User not found")
     @PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
     public ResponseEntity<CustomApiResponse> getUserById(@PathVariable String id){
         try {
@@ -98,12 +103,39 @@ public class UserController {
         }
     }
 
+    @GetMapping("Pagination")
+    @Operation(summary = "Get paginated users",
+            description = "Retrieves a paginated list of users with optional search")
+    @ApiResponse(responseCode = "200", description = "Users list retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "No users found")
+    @PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
+    public ResponseEntity<CustomApiResponsePagination> getUsersByPage(
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(defaultValue = "") String search) {
+    
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<User> usersPage = userService.getUsersByPage(pageable, search);
+        
+        List<UserResponseDto> userDtos = usersPage.getContent().stream()
+            .map(user -> modelMapper.map(user, UserResponseDto.class))
+            .collect(Collectors.toList());
+         
+        return ResponseEntity.ok(new CustomApiResponsePagination(
+            "success",
+            usersPage.getTotalElements(),
+            usersPage.getSize(),
+            usersPage.getTotalPages(),
+            usersPage.getNumber() + 1,
+            userDtos, "users found" ));
+    }
+
     @PatchMapping("updateUser/{id}")
-    @Operation(summary = "Actualizar un usuario",
-            description = "Actualiza los datos de un usuario existente")
-    @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente")
-    @ApiResponse(responseCode = "400", description = "Datos de usuario inválidos")
-    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    @Operation(summary = "Update user",
+            description = "Updates an existing user's data")
+    @ApiResponse(responseCode = "200", description = "User updated successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid user data")
+    @ApiResponse(responseCode = "404", description = "User not found")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CustomApiResponse> updateUser(@PathVariable String id, @RequestBody UpdateUser userResDto){
         try {

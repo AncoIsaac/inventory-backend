@@ -6,6 +6,9 @@ import com.isaacAnco.inventory.exception.ResourceNotFoundException;
 import com.isaacAnco.inventory.model.user.User;
 import com.isaacAnco.inventory.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -71,5 +74,13 @@ public class UserService implements IUserService {
     @Override
     public void deleteUser(String id) {
 
+    }
+
+    @Override
+    public Page<User> getUsersByPage(Pageable pageable, String search) {
+        if (search != null && !search.isEmpty()) {
+            return userRepository.findAllWithSearch(search, pageable);
+        }
+        return userRepository.findAll(pageable);
     }
 }
