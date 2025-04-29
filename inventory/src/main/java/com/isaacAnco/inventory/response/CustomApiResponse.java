@@ -10,7 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CustomApiResponse {
-    private String status;
     private Object data;
     private String message; // Nuevo campo para mensajes de error
 }

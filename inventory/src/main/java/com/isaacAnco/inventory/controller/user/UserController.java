@@ -53,11 +53,11 @@ public class UserController {
             UserResponseDto responseDto = modelMapper.map(newUser, UserResponseDto.class);
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(new CustomApiResponse("succes", responseDto, "user created succesfully"));
+                    .body(new CustomApiResponse( responseDto, "user created succesfully"));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(new CustomApiResponse("error", e.getMessage(), "user created error"));
+                    .body(new CustomApiResponse( null, e.getMessage()));
         }
     }
 
@@ -76,11 +76,11 @@ public class UserController {
                     .collect(Collectors.toList());
             return ResponseEntity
                    .status(HttpStatus.OK)
-                   .body(new CustomApiResponse("success", responseDto, "users found"));
+                   .body(new CustomApiResponse( responseDto, "users found"));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity
                    .status(HttpStatus.NOT_FOUND)
-                   .body(new CustomApiResponse("error", e.getMessage(), "users not found"));
+                   .body(new CustomApiResponse( null, e.getMessage()));
         }
     }
 
@@ -96,11 +96,12 @@ public class UserController {
             UserResponseDto responseDto = modelMapper.map(user, UserResponseDto.class);
             return ResponseEntity
                   .status(HttpStatus.OK)
-                 .body(new CustomApiResponse("success", responseDto, "user found"));
+                 .body(new CustomApiResponse( responseDto, "user found"));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity
                  .status(HttpStatus.NOT_FOUND)
-                 .body(new CustomApiResponse("error", e.getMessage(), "user not found"));
+                 .body(new CustomApiResponse( null, e.getMessage()));
+
         }
     }
 
@@ -123,7 +124,6 @@ public class UserController {
             .collect(Collectors.toList());
          
         return ResponseEntity.ok(new CustomApiResponsePagination(
-            "success",
             usersPage.getTotalElements(),
             usersPage.getSize(),
             usersPage.getTotalPages(),
@@ -144,11 +144,12 @@ public class UserController {
             UserResponseDto responseDto = modelMapper.map(updateUser, UserResponseDto.class);
             return ResponseEntity
                  .status(HttpStatus.OK)
-                 .body(new CustomApiResponse("success", responseDto, "user updated"));
+                 .body(new CustomApiResponse( responseDto, "user updated"));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(new CustomApiResponse("error", e.getMessage(), "user updated error"));
+                .body(new CustomApiResponse( null, e.getMessage()));
+
         }
     }
 
@@ -163,11 +164,12 @@ public class UserController {
             userService.deleteUser(id);
             return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new CustomApiResponse("success", null, "user deleted"));
+                .body(new CustomApiResponse( null, "user deleted"));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity
                .status(HttpStatus.NOT_FOUND)
-               .body(new CustomApiResponse("error", e.getMessage(), "user deleted error"));
+                                .body(new CustomApiResponse( null, e.getMessage()));
+
         }
     }
 }

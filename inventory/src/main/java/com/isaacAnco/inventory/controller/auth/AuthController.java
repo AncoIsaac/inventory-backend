@@ -36,10 +36,10 @@ public class AuthController {
         try {
             AuthResponseDto signIn = authService.signIn(request);
             AuthResponseDto responseAuth = modelMapper.map(signIn, AuthResponseDto.class);
-            return ResponseEntity.ok(new CustomApiResponse("success", responseAuth, "Login success"));
+            return ResponseEntity.ok(new CustomApiResponse(responseAuth, "Login success"));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new CustomApiResponse("error", e.getMessage(), "Error login"));
+                    .body(new CustomApiResponse(null, e.getMessage()));
         }
     }
 }

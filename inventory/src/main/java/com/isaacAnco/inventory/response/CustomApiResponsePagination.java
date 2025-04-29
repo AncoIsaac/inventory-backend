@@ -10,7 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CustomApiResponsePagination {
-    private String status;
     private Long totalItems;
     private int size;
     private int totalPages;

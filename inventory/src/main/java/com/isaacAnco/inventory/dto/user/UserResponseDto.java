@@ -15,4 +15,6 @@ public class UserResponseDto {
     private String userName;
     @Schema(description = "User's username", example = "true")
     private Boolean isActive;
+    @Schema(description = "Role", example = "USER")
+    private String role;
 }
